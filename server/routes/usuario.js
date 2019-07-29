@@ -6,14 +6,14 @@ const Usuario = require('../models/usuario');
 const { verificaToken, verificaADMIN_ROLE } = require('../middlewares/autenticacion'); //we call a middleware
 
 
-app.get('/usuario', verificaToken, function(req, res) {
+app.get('/usuarios', verificaToken, function(req, res) {
     let desde = req.query.desde || 0;
     desde = Number(desde);
 
     let limite = req.query.limite || 0;
     limite = Number(limite);
 
-    Usuario.find({ estado: true }, 'nombre email role estado google img').skip(desde).limit(limite).exec((error, usuarios) => {
+    Usuario.find({ estado: true }, 'nombre email role estado img').skip(desde).limit(limite).exec((error, usuarios) => {
         if (error) {
             return res.status(400).json({
                 ok: false,
@@ -25,13 +25,13 @@ app.get('/usuario', verificaToken, function(req, res) {
             res.json({
                 ok: true,
                 usuarios,
-                cuanros: conteo
+                cuantos: conteo
             });
         });
     });
 });
 
-app.post('/usuario', [verificaToken, verificaADMIN_ROLE], function(req, res) {
+app.post('/usuarios', [verificaToken, verificaADMIN_ROLE], function(req, res) {
 
     let body = req.body;
     let usuario = new Usuario({
@@ -57,7 +57,7 @@ app.post('/usuario', [verificaToken, verificaADMIN_ROLE], function(req, res) {
     });
 });
 
-app.put('/usuario/:id', [verificaToken, verificaADMIN_ROLE], function(req, res) {
+app.put('/usuarios/:id', [verificaToken, verificaADMIN_ROLE], function(req, res) {
     let id = req.params.id;
     //we just pick values we want to update, not password nor google status
     let body = _.pick(req.body, ['nombre', 'email', 'img', 'role', 'estado']);
@@ -76,7 +76,7 @@ app.put('/usuario/:id', [verificaToken, verificaADMIN_ROLE], function(req, res) 
     });
 });
 
-app.put('/updateStatusUsuario/:id', [verificaToken, verificaADMIN_ROLE], function(req, res) {
+app.put('/updateStatusUsuarios/:id', [verificaToken, verificaADMIN_ROLE], function(req, res) {
     let id = req.params.id;
     //we just pick values we want to update, not password nor google status
     let body = _.pick(req.body, ['estado']);
@@ -95,7 +95,7 @@ app.put('/updateStatusUsuario/:id', [verificaToken, verificaADMIN_ROLE], functio
     });
 });
 
-app.delete('/usuario/:id', [verificaToken, verificaADMIN_ROLE], function(req, res) {
+app.delete('/usuarios/:id', [verificaToken, verificaADMIN_ROLE], function(req, res) {
     let id = req.params.id;
 
     // Usuario.findByIdAndRemove(id, (error, usuarioBorrado) => {

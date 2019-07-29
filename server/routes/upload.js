@@ -2,7 +2,7 @@ const express = require('express');
 const fileUpload = require('express-fileupload');
 const app = express();
 const Usuario = require('../models/usuario');
-const Producto = require('../models/producto');
+const Task = require('../models/tasks');
 const fs = require('fs');
 const path = require('path');
 
@@ -23,7 +23,7 @@ app.put('/upload/:tipo/:id', function(req, res) {
     }
 
     //validar tipo
-    let tiposValidados = ['productos', 'usuarios'];
+    let tiposValidados = ['tasks', 'usuarios'];
     if (tiposValidados.indexOf(tipo) < 0) {
         return res.status(400).json({
             ok: false,
@@ -99,31 +99,31 @@ function imagenUsuario(id, res, nombreArchivo, tipo) {
             });
 
         });
-    } else if (tipo === 'productos') {
-        Producto.findById(id, (error, productoDB) => {
+    } else if (tipo === 'tasks') {
+        Task.findById(id, (error, taskDB) => {
             if (error) {
-                borraArchivo(productoDB.img, 'productos');
+                borraArchivo(taskDB.img, 'tasks');
                 return res.status(500).json({
                     ok: false,
                     err
                 });
             }
-            if (!productoDB) {
-                borraArchivo(productoDB.img, 'productos');
+            if (!taskDB) {
+                borraArchivo(taskDB.img, 'tasks');
                 return res.status(400).json({
                     ok: false,
                     err: {
-                        message: 'Usuario no existe'
+                        message: 'Tarea no existe'
                     }
                 });
             }
-            borraArchivo(productoDB.img, 'productos');
-            productoDB.img = nombreArchivo;
+            borraArchivo(taskDB.img, 'tasks');
+            taskDB.img = nombreArchivo;
 
-            productoDB.save((error, productoGuardado) => {
+            taskDB.save((error, taskGuardado) => {
                 res.json({
                     ok: true,
-                    usaurio: productoGuardado,
+                    usaurio: taskGuardado,
                     img: nombreArchivo
                 });
             });
